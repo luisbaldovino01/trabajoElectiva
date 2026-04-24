@@ -13,12 +13,14 @@ if "entrenado" not in st.session_state:
 
 # BOTÓN ENTRENAR
 if st.button("Entrenar modelo"):
-    try:
+
+    if os.path.exists("modelo_fatiga.pkl"):
+        st.warning("El modelo ya está entrenado")
+    else:
         entrenar_modelo()
+        st.success("Modelo entrenado y guardado")
         st.session_state.entrenado = True
         st.rerun()
-    except Exception as e:
-        st.error(f"Error al entrenar: {e}")
 
 
 # mensaje persistente
