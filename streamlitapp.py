@@ -3,14 +3,18 @@ import pandas as pd
 import subprocess
 import pickle
 import os
+from train import entrenar_modelo
 
 st.title("Predicción de Fatiga - ML Pipeline")
 
 # BOTÓN ENTRENAR
 if st.button("Entrenar modelo"):
-    subprocess.run(["python", "train.py"])
-    st.success("Modelo entrenado y guardado")
-    st.rerun()
+    try:
+        entrenar_modelo()
+        st.success("Modelo entrenado y guardado")
+        st.rerun()
+    except Exception as e:
+        st.error(f"Error al entrenar: {e}")
 
 # verificar si existen los archivos
 if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
