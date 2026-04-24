@@ -1,20 +1,30 @@
 import streamlit as st
 import pandas as pd
-import subprocess
 import pickle
 import os
 from train import entrenar_modelo
 
 st.title("Predicción de Fatiga - ML Pipeline")
 
+# estado de sesión
+if "entrenado" not in st.session_state:
+    st.session_state.entrenado = False
+
+
 # BOTÓN ENTRENAR
 if st.button("Entrenar modelo"):
     try:
         entrenar_modelo()
-        st.success("Modelo entrenado y guardado")
+        st.session_state.entrenado = True
         st.rerun()
     except Exception as e:
         st.error(f"Error al entrenar: {e}")
+
+
+# mensaje persistente
+if st.session_state.entrenado:
+    st.success("Modelo entrenado y guardado")
+
 
 # verificar si existen los archivos
 if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
