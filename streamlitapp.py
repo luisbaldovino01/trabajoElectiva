@@ -10,6 +10,7 @@ st.title("Predicción de Fatiga - ML Pipeline")
 if st.button("Entrenar modelo"):
     subprocess.run(["python", "train.py"])
     st.success("Modelo entrenado y guardado")
+    st.rerun()
 
 # verificar si existen los archivos
 if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
