@@ -6,14 +6,21 @@ from train import entrenar_modelo
 
 st.title("Predicción de Fatiga - ML Pipeline")
 
-# estado de sesión
+# =========================
+# ESTADO DE SESIÓN (CORRECTO)
+# =========================
 if "entrenado" not in st.session_state:
-    st.session_state.entrenado = False
+    st.session_state.entrenado = os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl")
 
 
+# =========================
 # BOTÓN ENTRENAR
+# =========================
 if st.button("Entrenar modelo"):
+
     metrics = entrenar_modelo()
+
+    st.session_state.entrenado = True
 
     st.success("Modelo entrenado y guardado")
 
@@ -23,15 +30,18 @@ if st.button("Entrenar modelo"):
     st.write(f"R2: {metrics['R2']:.2f}")
 
 
-# mensaje persistente
+# =========================
+# MENSAJE PERSISTENTE
+# =========================
 if st.session_state.entrenado:
-    st.success("Modelo entrenado y guardado")
+    st.success("Modelo disponible y listo para usar")
 
 
-# verificar si existen los archivos
+# =========================
+# PREDICCIÓN
+# =========================
 if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
 
-    # cargar modelo
     model = pickle.load(open("modelo_fatiga.pkl", "rb"))
     scaler = pickle.load(open("scaler.pkl", "rb"))
 
@@ -46,6 +56,7 @@ if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
     vel = st.number_input("Velocidad")
 
     if st.button("Predecir"):
+
         datos = pd.DataFrame([[fc, pot, cad, tiempo, temp, pend, vel]],
                              columns=[
                                  "frecuencia_cardiaca",
