@@ -13,14 +13,14 @@ if "entrenado" not in st.session_state:
 
 # BOTÓN ENTRENAR
 if st.button("Entrenar modelo"):
+    metrics = entrenar_modelo()
 
-    if os.path.exists("modelo_fatiga.pkl"):
-        st.warning("El modelo ya está entrenado")
-    else:
-        entrenar_modelo()
-        st.success("Modelo entrenado y guardado")
-        st.session_state.entrenado = True
-        st.rerun()
+    st.success("Modelo entrenado y guardado")
+
+    st.write("### Métricas del modelo")
+    st.write(f"MSE: {metrics['MSE']:.2f}")
+    st.write(f"MAE: {metrics['MAE']:.2f}")
+    st.write(f"R2: {metrics['R2']:.2f}")
 
 
 # mensaje persistente
