@@ -2,44 +2,59 @@ import streamlit as st
 import pandas as pd
 import subprocess
 import pickle
+import os
 
 st.title("Predicción de Fatiga - ML Pipeline")
 
-# BOTÓN ENTRENAR (solo una vez manual)
+# BOTÓN ENTRENAR
 if st.button("Entrenar modelo"):
     subprocess.run(["python", "train.py"])
     st.success("Modelo entrenado y guardado")
 
-# cargar modelo
-model = pickle.load(open("modelo_casas.pkl", "rb"))
-scaler = pickle.load(open("scaler.pkl", "rb"))
+# verificar si existen los archivos
+if os.path.exists("modelo_fatiga.pkl") and os.path.exists("scaler.pkl"):
 
-st.header("Predicción")
+    # cargar modelo
+    model = pickle.load(open("modelo_fatiga.pkl", "rb"))
+    scaler = pickle.load(open("scaler.pkl", "rb"))
 
-fc = st.number_input("Frecuencia cardiaca")
-pot = st.number_input("Potencia")
-cad = st.number_input("Cadencia")
-tiempo = st.number_input("Tiempo")
-temp = st.number_input("Temperatura")
-pend = st.number_input("Pendiente")
-vel = st.number_input("Velocidad")
+    st.header("Predicción")
 
-if st.button("Predecir"):
-    datos = pd.DataFrame([[fc, pot, cad, tiempo, temp, pend, vel]],
-                         columns=["frecuencia_cardiaca","potencia","cadencia","tiempo","temperatura","pendiente","velocidad"])
+    fc = st.number_input("Frecuencia cardiaca")
+    pot = st.number_input("Potencia")
+    cad = st.number_input("Cadencia")
+    tiempo = st.number_input("Tiempo")
+    temp = st.number_input("Temperatura")
+    pend = st.number_input("Pendiente")
+    vel = st.number_input("Velocidad")
 
-    datos = scaler.transform(datos)
-    pred = model.predict(datos)[0]
+    if st.button("Predecir"):
+        datos = pd.DataFrame([[fc, pot, cad, tiempo, temp, pend, vel]],
+                             columns=[
+                                 "frecuencia_cardiaca",
+                                 "potencia",
+                                 "cadencia",
+                                 "tiempo",
+                                 "temperatura",
+                                 "pendiente",
+                                 "velocidad"
+                             ])
 
-    st.success(f"Fatiga predicha: {round(pred,2)}")
+        datos = scaler.transform(datos)
+        pred = model.predict(datos)[0]
 
-    if pred <= 20:
-        st.info("Sin fatiga significativa")
-    elif pred <= 40:
-        st.warning("Esfuerzo leve")
-    elif pred <= 60:
-        st.warning("Fatiga moderada")
-    elif pred <= 80:
-        st.error("Fatiga evidente")
-    else:
-        st.error("Fatiga extrema")
+        st.success(f"Fatiga predicha: {round(pred, 2)}")
+
+        if pred <= 20:
+            st.info("Sin fatiga significativa")
+        elif pred <= 40:
+            st.warning("Esfuerzo leve")
+        elif pred <= 60:
+            st.warning("Fatiga moderada")
+        elif pred <= 80:
+            st.error("Fatiga evidente")
+        else:
+            st.error("Fatiga extrema")
+
+else:
+    st.warning("Primero debes entrenar el modelo")
