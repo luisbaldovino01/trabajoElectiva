@@ -15,7 +15,7 @@ def entrenar_modelo():
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
 
-    model = KNeighborsRegressor(n_neighbors=5)
+    model = KNeighborsRegressor(n_neighbors=13)
     model.fit(X_train, y_train)
 
     pickle.dump(model, open("modelo_fatiga.pkl", "wb"))
